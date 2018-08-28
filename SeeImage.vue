@@ -20,13 +20,11 @@
     </el-dialog>
 </template>
 <script>
-    import {mapState, mapMutations} from "vuex";
-    import {mouseEvent} from '../../../utils/mouseEvent'
     export default {
         data() {
             return {
-                currentImg:'',
-                isShowImageDialog:false,
+                currentImg: '',
+                isShowImageDialog: false,
 
             }
         },
@@ -105,13 +103,11 @@
                 this.isShowImageDialog = false;
                 document.removeEventListener('click', null);
                 setTimeout(() => {
-                    if(this.$refs.user_image)
-                    {
+                    if (this.$refs.user_image) {
                         this.$refs.user_image.style.transform = 'rotate(0deg)';
                         this.$refs.user_image.style.left = '';
                         this.$refs.user_image.style.top = '';
                     }
-
 
                 }, 300)
             },
