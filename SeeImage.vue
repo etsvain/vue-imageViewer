@@ -108,13 +108,17 @@
                         this.$refs.user_image.style.left = '';
                         this.$refs.user_image.style.top = '';
                     }
-
                 }, 300)
             },
 
         }
     }
 </script>
-<style scoped>
-
+<style>
+    .imageBox {
+        background: transparent !important;
+        position: relative;
+        box-shadow: none !important;
+        height: 80vh;
+    }
 </style>
