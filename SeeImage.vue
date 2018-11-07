@@ -1,44 +1,48 @@
 <template>
-    <el-dialog
-            :visible.sync="isShowImageDialog"
-            @closed="clearImg"
-            center
-            :show-close="false"
-            custom-class="imageBox"
-            @open="hideImage"
+    <div v-if="visible" @click="hideImage">
+        <div class="see-image">
+            <img v-drag="greet" id="drag" class="image" :src="currentImg" @mousewheel="wheel"
+                 ref="user_image"/>
+        </div>
+        <div class="close" @click="close"><img src="./icon/close.png"/></div>
+        <div class="rotate" @click.stop="rotateImage"><img src="./icon/rotate.png"/></div>
 
-    >
-        <div style="width: 100%;display: flex;justify-content: center;position: relative">
-            <img v-drag="greet" id="drag" :src="currentImg" @mousewheel="wheel" ref="user_image"
-                 style="max-width: 850px;position: absolute"/>
-        </div>
-        <div
-                style="width: 100%;display: flex;justify-content:center;position: absolute;bottom:1vh;left: 0;z-index: 999">
-            <el-button icon="el-icon-refresh" circle @click.stop="rotateImage"
-                       size="small"></el-button>
-        </div>
-    </el-dialog>
+    </div>
 </template>
+
 <script>
+    import config from './config'
+
     export default {
         data() {
             return {
                 currentImg: '',
-                isShowImageDialog: false,
-
+                visible: false,
             }
         },
-
+        watch: {},
         methods: {
+            close() {
+                this.clearImg();
+            },
             //接受传来的位置数据，并将数据绑定给data下的val
             greet(val) {
                 this.val = val;
             },
 
+            //点击图片之外区域隐藏图片
+            hideImage(e) {
+                if (!this.visible || !config.canClickModalHide) return;
+                document.addEventListener('click', (e) => {
+                    if (e.target.nodeName !== 'IMG' && e.target.nodeName !== 'BUTTON') {
+                        this.clearImg();
+                    }
+                });
+            },
+
             //旋转图片
             rotateImage(e) {
                 // console.log(this.$refs.user_image.style.transform);
-                let toRotateDeg = '';
                 let fromRotateDeg = this.$refs.user_image.style.transform.split(' ');
 
                 switch (fromRotateDeg[0]) {
@@ -59,28 +63,10 @@
                         break;
                 }
                 this.$refs.user_image.style.transform = fromRotateDeg.join(' ');
-
             },
-            //点击图片之外区域隐藏图片
-            hideImage(e) {
-                document.addEventListener('click', (e) => {
-                    if (e.target.nodeName !== 'IMG' && e.target.nodeName !== 'BUTTON') {
-                        this.clearImg();
-                    }
-                });
-            },
-
-            //查看图片
-            seeImage(e) {
-                this.currentImg = e.target.currentSrc;
-                this.isShowImageDialog = true;
-                this.$nextTick(() => {
-                    this.$refs.user_image.style.transform = 'rotate(0deg)';
-                })
-            },
-
             //滚轮
             wheel(e) {
+
                 if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件
                     if (e.wheelDelta > 0) { //当滑轮向上滚动时
                         this.$refs.user_image.style.transform = this.$refs.user_image.style.transform + ' scale(0.9)';
@@ -100,7 +86,7 @@
 
             //当图片隐藏时候的回调
             clearImg() {
-                this.isShowImageDialog = false;
+                this.visible = false;
                 document.removeEventListener('click', null);
                 setTimeout(() => {
                     if (this.$refs.user_image) {
@@ -108,17 +94,93 @@
                         this.$refs.user_image.style.left = '';
                         this.$refs.user_image.style.top = '';
                     }
-                }, 300)
+                }, 100)
             },
-
         }
     }
 </script>
+
 <style>
-    .imageBox {
-        background: transparent !important;
-        position: relative;
-        box-shadow: none !important;
-        height: 80vh;
+    .see-image {
+        width: 100%;
+        z-index: 9999;
+        background: rgba(0, 0, 0, .3) !important;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: .25s showAimation ease;
     }
+
+    @keyframes showAimation {
+        from {
+            opacity: .3;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .image {
+        max-width: 400px;
+        min-width: 150px;
+        position: absolute;
+    }
+
+    .rotate {
+        width: 30px;
+        height: 30px;
+        background: #fff;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 50px;
+        left: 50%;
+        margin-left: -15px;
+        color: #000;
+        border: 1px solid rgba(0, 0, 0, .4);
+        font-size: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        z-index: 10000;
+    }
+
+    .rotate img {
+        width: 10px;
+    }
+
+    .rotate:hover {
+        background: #409EFF;
+        border: 1px solid #409EFF;
+    }
+
+    .close {
+        position: absolute;
+        right: 140px;
+        top: 140px;
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: .3s;
+        cursor: pointer;
+        z-index: 10000;
+    }
+
+    .close:hover {
+        transform: rotate(90deg);
+    }
+
+    .close img {
+        width: 40px;
+        height: 40px;
+
+    }
+
 </style>
