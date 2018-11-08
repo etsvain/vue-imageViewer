@@ -1,11 +1,11 @@
-import SeeImageComponent from './ImageViewer'
+import ImageViewerComponent from './ImageViewer'
 
-const SeeImage = {}
+const ImageViewer = {}
 
-SeeImage.install = Vue => {
-    const SeeImageConstructor = Vue.extend(SeeImageComponent);
+ImageViewer.install = Vue => {
+    const ImageViewerConstructor = Vue.extend(ImageViewerComponent);
 
-    const instance = new SeeImageConstructor();
+    const instance = new ImageViewerConstructor();
 
     instance.$mount(document.createElement('div'))
     document.body.appendChild(instance.$el)
@@ -29,6 +29,8 @@ SeeImage.install = Vue => {
                 document.onmousemove = function (e) {
                     //通过事件委托，计算移动的距离
                     let l = 0, t = 0;
+
+                    // 拖动边界
                     if (e.clientX >= bw) {
                         l = bw - disX;
                     } else if (e.clientX <= 0) {
@@ -53,6 +55,7 @@ SeeImage.install = Vue => {
                     //将此时的位置传出去
                     binding.value({x: e.pageX, y: e.pageY})
                 };
+                // 事件移除
                 document.onmouseup = function (e) {
                     document.onmousemove = null;
                     document.onmouseup = null;
@@ -61,12 +64,12 @@ SeeImage.install = Vue => {
         }
     );
 
-    // 挂载自定义方法
-    Vue.prototype.$seeImage = (e) => {
+    // 挂载触发方法
+    Vue.prototype.$imageViewer = (e) => {
         instance.currentImg = e.currentTarget.currentSrc;
         instance.visible = true;
     }
 
 }
 
-export default SeeImage
+export default ImageViewer;

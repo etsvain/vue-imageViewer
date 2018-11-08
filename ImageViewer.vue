@@ -1,11 +1,11 @@
 <template>
     <div v-if="visible" @click="hideImage">
-        <div class="see-image">
+        <div class="see-image" :style="{ backgroundColor:background }">
             <img v-drag="greet" id="drag" class="image" :src="currentImg" @mousewheel="wheel"
                  ref="user_image"/>
         </div>
-        <div class="close" @click="close"><img src="./icon/close.png"/></div>
-        <div class="rotate" @click.stop="rotateImage"><img src="./icon/rotate.png"/></div>
+        <div class="close" @click="close" v-show="closeButtonVisible"><img src="./icon/close.png"/></div>
+        <div class="rotate" @click.stop="rotateImage" v-show="rotateButtonVisible"><img src="./icon/rotate.png"/></div>
 
     </div>
 </template>
@@ -13,11 +13,15 @@
 <script>
     import config from './config'
 
+    const {modalOpacity, canClickModalHide, rotateButtonVisible, closeButtonVisible} = config;
     export default {
         data() {
             return {
                 currentImg: '',
                 visible: false,
+                background: modalOpacity > 1 || modalOpacity <= 0 || typeof modalOpacity !== "number" ? null : 'rgba(0,0,0,' + modalOpacity + ')',
+                rotateButtonVisible,
+                closeButtonVisible,
             }
         },
         watch: {},
@@ -32,7 +36,7 @@
 
             //点击图片之外区域隐藏图片
             hideImage(e) {
-                if (!this.visible || !config.canClickModalHide) return;
+                if (!this.visible || (!canClickModalHide && closeButtonVisible)) return;
                 document.addEventListener('click', (e) => {
                     if (e.target.nodeName !== 'IMG' && e.target.nodeName !== 'BUTTON') {
                         this.clearImg();
@@ -100,11 +104,11 @@
     }
 </script>
 
-<style>
+<style scoped>
     .see-image {
         width: 100%;
         z-index: 9999;
-        background: rgba(0, 0, 0, .3) !important;
+        background: rgba(0, 0, 0, .3);
         height: 100%;
         position: fixed;
         top: 0;
