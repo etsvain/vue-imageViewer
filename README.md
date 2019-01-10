@@ -15,6 +15,6 @@
 	4. Add @click="$imageViewer" // <img src="/static/img/img.jpg" @click="$imageViewer"/> to the image you need to click to view.
 	5. Configure it in config
 	
-## 效果图/Rendering##
+## 效果图/Rendering ##
 
 ![Image text](icon/screenshot.png)
